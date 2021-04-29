@@ -43,7 +43,7 @@ void enqueue(struct Queue* queue, int item)
                   % queue->capacity;
     queue->array[queue->rear] = item;
     queue->size = queue->size + 1;
-    printf("%d enqueued to queue\n", item);
+    // printf("%d enqueued to queue\n", item);
 }
  
 int dequeue(struct Queue* queue)
@@ -104,29 +104,22 @@ int main(int argc, char **argv)
                 
                 if(elementos[p]->size == (unsigned) 1) {
                     teamQueue[aux] = elementos[p];
-                    cout << "Endereço de memória do elemento " << p << " " << elementos[p] << endl; 
-                    cout << "Front do elemento " << p << ": " << front(elementos[p]) <<endl;
-                    cout << "Rear do elemento " << p << ": " << rear(elementos[p]) <<endl;
-                    cout << "Size do elemento " << p << ": " << elementos[p]->size << endl;
-                                   
-
-                    if(aux == 13){
-                        cout << "Vou tentar dar pop nele aqui em cima: " << endl;
-                        cout << "Index do problema: " << aux << endl << p  << "fim" << endl;
-                    }
-
+                    // cout << "Endereço de memória do elemento " << p << " " << elementos[p] << endl; 
+                    // cout << "Front do elemento " << p << ": " << front(elementos[p]) <<endl;
+                    // cout << "Rear do elemento " << p << ": " << rear(elementos[p]) <<endl;
+                    // cout << "Size do elemento " << p << ": " << elementos[p]->size << endl;
                     aux++;
                 }
             }else {
-                if(k == 4){
-                cout << "Endereço  " << iterator << ": " << teamQueue[iterator] << endl;
-                cout << "size: " << teamQueue[iterator]->size << " " << "iterator: " << iterator << endl;
-                cout << "top: " << front(teamQueue[iterator]) << endl;
-                cout << "vale: " << rear(teamQueue[iterator]) << endl;
-                cout << "Teste de acesso ao array: " << teamQueue[iterator]->array << endl;
-                }
+                // if(k == 4){
+                // cout << "Endereço do iterator " << iterator << ": " << teamQueue[iterator] << endl;
+                // cout << "size do elemento atual: " << teamQueue[iterator]->size << " " << "iterator: " << iterator << endl;
+                // cout << "top: " << front(teamQueue[iterator]) << endl;
+                // cout << "vale: " << rear(teamQueue[iterator]) << endl;
+                // cout << "Teste de acesso ao array: " << teamQueue[iterator]->array << endl;
+                // }
 
-                cout << "Checkpoint: " << rear(teamQueue[iterator]) << endl;
+                // cout << "Checkpoint: " << rear(teamQueue[iterator]) << endl;
                 cout << dequeue(teamQueue[iterator]) << endl;
                 if(isEmpty(teamQueue[iterator])) {
                     iterator++;
