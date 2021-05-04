@@ -194,7 +194,8 @@ int main() {
             if(in == "ENQUEUE"){
                 cin >> p;
                 if(head == NULL){
-                    appendThatReturnsNode(&head,p); //A posição array[p] = numero de time aponta para o último elemento da lista
+                    times[array[p]] = appendThatReturnsNode(&head,p); //A posição array[p] = numero de time aponta para o último elemento da lista
+                    cout << times[array[p]] << endl;
                 }else{
                     //Se a lista não tiver vazia, é preciso verificar onde vamos colocar o elemento.
                     //Como verificar ??
@@ -202,10 +203,10 @@ int main() {
                     //Olhar no ponteiro do time do elemento pra ver se ele aponta para algum lugar, se sim, insertAfter nele.
                     //Caso contrário, ele entra no final da fila.
                     if(times[array[p]] == NULL){
-                        appendThatReturnsNode(&head, p);
+                        times[array[p]] = appendThatReturnsNode(&head, p);
                         printList(head);
                     }else{
-                        insertAfterThatReturnsNode(times[array[p]], p);
+                        times[array[p]] = insertAfterThatReturnsNode(times[array[p]], p);
                         printList(head);
                     }
                 }
