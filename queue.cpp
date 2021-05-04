@@ -54,7 +54,11 @@ void insertAfter(struct Node* prev_node, int new_data)
 prev_node */
 Node* insertAfterThatReturnsNode(struct Node* prev_node, int new_data) 
 { 
-          
+    if (prev_node == NULL) 
+    { 
+    printf("the given previous node cannot be NULL");     
+    return NULL; 
+    } 
     /* 1. allocate new node */
     struct Node* new_node =(struct Node*) malloc(sizeof(struct Node)); 
   
@@ -190,7 +194,7 @@ int main() {
             if(in == "ENQUEUE"){
                 cin >> p;
                 if(head == NULL){
-                    times[array[p]] = insertAfterThatReturnsNode(head,p); //A posição array[p] = numero de time aponta para o último elemento da lista
+                    appendThatReturnsNode(&head,p); //A posição array[p] = numero de time aponta para o último elemento da lista
                 }else{
                     //Se a lista não tiver vazia, é preciso verificar onde vamos colocar o elemento.
                     //Como verificar ??
@@ -198,14 +202,16 @@ int main() {
                     //Olhar no ponteiro do time do elemento pra ver se ele aponta para algum lugar, se sim, insertAfter nele.
                     //Caso contrário, ele entra no final da fila.
                     if(times[array[p]] == NULL){
-                        times[array[p]] = appendThatReturnsNode(&head, p);
+                        appendThatReturnsNode(&head, p);
+                        printList(head);
                     }else{
-                        times[array[p]] = insertAfterThatReturnsNode(times[array[p]], p);
+                        insertAfterThatReturnsNode(times[array[p]], p);
+                        printList(head);
                     }
                 }
             } else {
                 //Lógica de remoção do primeiro item da fila.
-                printList(head);
+                // printList(head);
             }
         }
         cout << endl;
