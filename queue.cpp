@@ -143,6 +143,8 @@ void printList(struct Node *node)
      printf(" %d ", node->data);
      node = node->next;
   }
+
+  printf("\n");
 }
 /* Driver program to test above functions*/
 
@@ -172,7 +174,43 @@ void printList(struct Node *node)
 //   return 0;
 // }
 
-
+/* Given a reference (pointer to pointer) to the head of a list
+   and a position, deletes the node at the given position */
+void deleteNode(struct Node **head_ref, int position)
+{
+   // If linked list is empty
+   if (*head_ref == NULL)
+      return;
+ 
+   // Store head node
+   struct Node* temp = *head_ref;
+ 
+    // If head needs to be removed
+    if (position == 0)
+    {   
+        cout << temp->data << endl;
+        *head_ref = temp->next;   // Change head
+        free(temp);               // free old head
+        return;
+    }
+ 
+    // Find previous node of the node to be deleted
+    for (int i=0; temp!=NULL && i<position-1; i++)
+         temp = temp->next;
+ 
+    // If position is more than number of nodes
+    if (temp == NULL || temp->next == NULL)
+         return;
+ 
+    // Node temp->next is the node to be deleted
+    // Store pointer to the next of node to be deleted
+    struct Node *next = temp->next->next;
+ 
+    // Unlink the node from linked list
+    free(temp->next);  // Free memory
+ 
+    temp->next = next;  // Unlink the deleted node from list
+}
 
 int main() {
     int t, v, p, k = 1;
@@ -180,8 +218,7 @@ int main() {
     while(scanf("%d",&t),t){
         struct Node* head = NULL;
         int* array = (int*) malloc(1000000 * sizeof(int)); //Array de times
-        Node** times = (Node**) malloc(t * sizeof(Node)); //array de ponteiros para uma fila.
-
+        struct Node* times[t] = {(struct Node*) NULL};
         while(t--){ 
             cin >> v;
             for(int i=0;i<v;i++){
@@ -195,7 +232,6 @@ int main() {
                 cin >> p;
                 if(head == NULL){
                     times[array[p]] = appendThatReturnsNode(&head,p); //A posição array[p] = numero de time aponta para o último elemento da lista
-                    cout << times[array[p]] << endl;
                 }else{
                     //Se a lista não tiver vazia, é preciso verificar onde vamos colocar o elemento.
                     //Como verificar ??
@@ -204,13 +240,12 @@ int main() {
                     //Caso contrário, ele entra no final da fila.
                     if(times[array[p]] == NULL){
                         times[array[p]] = appendThatReturnsNode(&head, p);
-                        printList(head);
                     }else{
                         times[array[p]] = insertAfterThatReturnsNode(times[array[p]], p);
-                        printList(head);
                     }
                 }
             } else {
+                deleteNode(&head, 0);
                 //Lógica de remoção do primeiro item da fila.
                 // printList(head);
             }
