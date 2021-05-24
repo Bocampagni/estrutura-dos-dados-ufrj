@@ -4,92 +4,87 @@
 
 using namespace std;
 
-template<typename Expression, typename Derivative>
+template<typename E, typename D>
 class X{
 public:
 
-    X(Expression e, Derivative d): equacao(e), derivada(d){}
+    X(E e, D d): noPontoSemDiff(e), noPontoDiff(d){}
 
-    auto e(double v) const {return equacao(v);}
-    auto dx(double v) const {return derivada(v); }
+    auto e(double v) const {return noPontoSemDiff(v);}
+    auto dx(double v) const {return noPontoDiff(v); }
 
 private:
-    Expression equacao;
-    Derivative derivada;
+    E noPontoSemDiff;
+    D noPontoDiff;
 };
 
 template<typename E, typename D>
-auto transfEmExp( X<E,D> eq){return eq;}
+auto transformada( X<E,D> equation){return equation;}
 
-auto transfEmExp(double n){
-    X delta([n](double v) {return n; }, [n](double v) {return 0;});
-    return delta;
-}
-
-//Arrow function
-template <typename T, typename H>
-auto operator ->*(T f, H g){
-    auto w = transfEmExp(f);
-    using k = decltype(g);
-
-    static_assert(is_same<int,k>::value, "Operador de potenciação definido apenas para inteiros");
-
-    return X([w,g](double v){return pow(w.e(v),g); }, [w,g](double v ){return g * pow(w.e(v), g - 1) * w.dx(v); });
-}
-
-//Soma
-template <typename T, typename H>
-auto operator+(T f, H g){
-    auto w = transfEmExp(f);
-    auto z = transfEmExp(g);
-    return X([w,z](double v ){return w.e(v) + z.e(v);}, [w,z](double v){return w.dx(v) + z.dx(v);});
-}
-
-template <typename T, typename H>
-auto operator-(T f, H g){
-    auto w = transfEmExp(f);
-    auto z = transfEmExp(g);
-    return X([w,z](double v ){return w.e(v) - z.e(v);}, [w,z](double v){return w.dx(v) - z.dx(v);});
+auto transformada(double num){
+    X aux([num](double v) {return num; }, [num](double v) {return 0;});
+    return aux;
 }
 
 
-template <typename T, typename H>
-auto operator*(T f, H g){
-    auto w = transfEmExp(f);
-    auto z = transfEmExp(g);
-    return X([w,z](double v ){return w.e(v) * z.e(v);}, [w,z](double v){return w.dx(v)*z.e(v) + w.e(v)*z.dx(v);});
+template <typename TIPO, typename OUTROTIPO >
+auto operator+(TIPO func, OUTROTIPO outraFunc){
+    auto aux = transformada(func);
+    auto outroAux = transformada(outraFunc);
+    return X([aux,outroAux](double v ){return aux.e(v) + outroAux.e(v);}, [aux,outroAux](double v){return aux.dx(v) + outroAux.dx(v);});
 }
 
-//template <typename T, typename H>
-//auto operator/(T f, H g){
-//    auto w = transfEmExp(f);
-//    auto z = transfEmExp(g);
-//    return X([w,z](double v ){return w.e(v) / z.e(v);}, [w,z](double v){return w.dx(v)*z.e(v) + w.e(v)*z.dx(v);});
-//}
-//cos
-template<typename T>
-auto cos(T x){
-    auto w = transfEmExp(x);
-    return X([w](double v){return cos(w.e(v));},[w](double v){return -(sin(w.e(v))) * w.dx(v);});
+template <typename TIPO, typename OUTROTIPO >
+auto operator-(TIPO func, OUTROTIPO outraFunc){
+    auto aux = transformada(func);
+    auto outroAux = transformada(outraFunc);
+    return X([aux,outroAux](double v ){return aux.e(v) - outroAux.e(v);}, [aux,outroAux](double v){return aux.dx(v) - outroAux.dx(v);});
 }
-//sin
-template<typename T>
-auto sin(T x){
-    auto w = transfEmExp(x);
-    return X([w](double v){return sin(w.e(v));},[w](double v){return cos(w.e(v) * w.dx(v));});
+
+
+template <typename TIPO, typename OUTROTIPO >
+auto operator*(TIPO func, OUTROTIPO outraFunc){
+    auto aux = transformada(func);
+    auto outroAux = transformada(outraFunc);
+    return X([aux,outroAux](double v ){return aux.e(v) * outroAux.e(v);}, [aux,outroAux](double v){return aux.dx(v)*outroAux.e(v) + aux.e(v)*outroAux.dx(v);});
 }
-//exp
-template <typename T>
-auto exp(T x){
-    auto w = transfEmExp(x);
-    return X([w](double v){return exp(v);}, [w](double v){return exp(w.e(v) * w.dx(v));});
-}
-//Log
 template <typename T>
 auto log(T x){
-    auto w = transfEmExp(x);
-    return X([w](double v){return log(v);}, [w](double v){return 1/v;});
+    auto aux = transformada(x);
+    return X([aux](double v){return log(v);}, [aux](double v){return 1/v;});
 }
+template<typename T>
+auto sin(T x){
+    auto aux = transformada(x);
+    return X([aux](double v){return sin(aux.e(v));},[aux](double v){return cos(aux.e(v) * aux.dx(v));});
+}
+
+
+template<typename T>
+auto cos(T x){
+    auto aux = transformada(x);
+    return X([aux](double v){return cos(aux.e(v));},[aux](double v){return -(sin(aux.e(v))) * aux.dx(v);});
+}
+
+template <typename T>
+auto exp(T x){
+    auto aux = transformada(x);
+    return X([aux](double v){return exp(v);}, [aux](double v){return exp(aux.e(v) * aux.dx(v));});
+}
+
+
+template <typename TIPO, typename OUTROTIPO >
+auto operator ->*(TIPO func, OUTROTIPO outraFunc){
+    auto aux = transformada(func);
+    using T = decltype(outraFunc);
+
+    static_assert(is_same<int,T>::value, "Operador de potenciação definido apenas para inteiros");
+
+    return X([aux,outraFunc](double v){return pow(aux.e(v),outraFunc); }, [aux,outraFunc](double v ){return outraFunc * pow(aux.e(v), outraFunc - 1) * aux.dx(v); });
+}
+
+
+
 
 X x([](double v){return v;}, [](double v){return 1;});
 
